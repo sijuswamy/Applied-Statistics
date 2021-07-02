@@ -1,0 +1,190 @@
+---
+title: "One-Way ANOVA on Numerical Tables"
+output: html_notebook
+---
+
+
+## Objective of the lesson
+
+In class we handed out ``Examples of ANOVA". Below we redo the example using R.
+
+1. **Set up an analysis of variance test for the following data showing yields from three fertilizers- F1, F2, and F3.**
+
+F1: 18.2, 20.1, 17.6, 16.8, 18.8, 19.7, 19.1
+
+F2: 17.4, 18.7, 19.1, 16.4, 15.9, 18.4, 17.7
+
+F3: 15.2, 18.8, 17.7, 16.5, 15.9, 17.1, 16.7
+
+There are three groups with seven observations per group. We denote group $i$ values by $yi$:
+
+```{r}
+ y1 = c(18.2, 20.1, 17.6, 16.8, 18.8, 19.7, 19.1)
+ y2 = c(17.4, 18.7, 19.1, 16.4, 15.9, 18.4, 17.7)
+ y3 = c(15.2, 18.8, 17.7, 16.5, 15.9, 17.1, 16.7)
+```
+
+Now we combine them into one long vector, with a second vector, group, identifying group
+membership:
+```{r}
+y = c(y1, y2, y3)
+n = rep(7, 3)
+Fertilizer = rep(1:3, n)
+```
+
+Now we show summary statistics by group and overall. We locally define a temporary
+function, `tmpfn`, to make this easier.
+
+
+
+```{r}
+ tmpfn = function(x) c(sum = sum(x), mean = mean(x), var = var(x), n = length(x))
+```
+
+
+```{r}
+tapply(y, Fertilizer, tmpfn)
+```
+
+While we could show you how to use R to mimic the computation of SS by hand, it is
+more natural to go directly to the ANOVA table.
+
+```{r}
+data = data.frame(y_values = y, Fertilizer = factor(Fertilizer))
+```
+
+```{r}
+knitr::kable(data, format="markdown")
+```
+## Displaying the dataframe in a better format
+
+```{r}
+library(stargazer)
+stargazer(data,                 # Export txt
+          summary = FALSE,
+          type = "text",
+          out = "data_stargazer_txt.txt")
+```
+```{r}
+
+par(mar=c(8, 4.1, 4.1, 2.1))
+
+#create boxplots
+boxplot(y_values ~ Fertilizer,
+data = data,
+main = "Yield in metric tonnes",
+xlab = "Fertilizer",
+ylab = "yield",
+col = "steelblue",
+border = "black", 
+las = 2 #make x-axis labels perpendicular
+)
+```
+
+
+```{r}
+my_anova=aov(y ~ Fertilizer, data)
+summary(my_anova)
+```
+
+## Perform Post-Hoc Tests (If Necessary)
+
+If the p-value in the ANOVA output is less than .05, we reject the null hypothesis. This tells us that the mean value between each group is not equal. However, it doesn’t tell us which groups differ from each other.
+
+In order to find this out, we must perform a post hoc test. In R, we can use the `TukeyHSD()` function to do so:
+
+```{r}
+TukeyHSD(my_anova)
+```
+
+So it is reasonable to think that the difference between Fertilizer 1 and 3 is significant at 5% level.
+
+
+2. **Set up an analysis of variance table for the following per acre production data for three varities of wheat, each grown on 4 plots and state if the variety differences are significant.**
+
+V1: 6 7 3 8
+
+V2: 5 5 3 7
+
+V3: 5 4 3 4
+
+
+## Two-way anova using R
+
+
+1. **Set up analysis of variance table for the following two-way design results.**
+
+
+```{r}
+dw <- read.table(header=T, text='
+ Fertilizer A  B C 
+   W   6    5     5   
+   X   7    5     4   
+   Y   3    3     3  
+   Z   8    7     4  
+ ')
+dw
+```
+
+```{r}
+library(tidyr)
+library(dplyr)
+```
+
+```{r}
+data=dw %>% 
+  gather(v, yield, A:C) %>% 
+  separate(v, c("seed")) %>% 
+  arrange(Fertilizer)
+```
+
+```{r}
+data
+```
+
+```{r}
+table(data$Fertilizer, data$seed)
+```
+
+## Exploring the Data
+
+Before we even fit the two-way ANOVA model, we can gain a better understanding of the data by finding the mean and standard deviation of weight loss for each of the six treatment groups using the dplyr package:
+
+
+```{r}
+data %>%
+  group_by(Fertilizer) %>%
+  summarise(mean = mean(yield),
+            sd = sd(yield))
+
+```
+
+
+## Visualization
+
+We can also create a boxplot for each of the six treatment groups to visualize the distribution of weight loss for each group:
+
+```{r}
+par(mar=c(8, 4.1, 4.1, 2.1))
+
+#create boxplots
+boxplot(yield ~ Fertilizer,
+data = data,
+main = "Yield in metric tonnes",
+xlab = "Fertilizer",
+ylab = "Seed",
+col = "steelblue",
+border = "black", 
+las = 2 #make x-axis labels perpendicular
+)
+```
+
+## Anova
+
+
+```{r}
+model = aov(yield~Fertilizer*seed, data = data)
+#view the model output
+summary(model)
+```
+
