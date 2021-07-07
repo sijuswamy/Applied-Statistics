@@ -1,0 +1,390 @@
+---
+title: "Experiment-1- Visualizing Data  using R"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+>Tables, charts and plots. Visualising Measures of Central Tendency, Variation, and  Shape. Box plots, Pareto diagrams. How to find the mean, median, standard deviation and quantiles of a set of observations.Students may experiment with real as well as artificial data sets.
+
+## Tables
+
+Tables can be created from given data. An example is shown bellow: Let's work with the builtin data set `iris`.
+
+```{r}
+iris
+```
+
+
+
+```{r}
+## Frequency table with table() function in R
+table(iris$Species)
+
+```
+
+```{r}
+table(iris$Species,iris$Sepal.Length)
+```
+
+## Frequency Table with Proportion:
+
+proportion of the frequency table is created using prop.table() function. Table is passed as an argument to the prop.table() function. so that the proportion of the frequency table is calculated
+
+```{r}
+## Frequency table with with proportion using table() function in R 
+table1 = as.table(table(iris$Species))
+prop.table(table1)
+
+```
+
+## Frequency table with condition:
+
+We can also create a frequency table with predefined condition using R table() function.For example lets say we need to get how many obervations have Sepal.Length>1.0 in iris table.
+
+```{r}
+table(iris$Sepal.Length>1.0)
+```
+
+## 2 way cross table in R:
+
+Table function also helpful in creating 2 way cross table in R. For example lets say we need to create cross tabulation of gears and carb in `mtcars` table
+
+```{r}
+mtcars
+```
+
+
+```{r}
+table(mtcars$gear,mtcars$carb)
+```
+
+## 3 way cross table in R:
+Similar to 2 way cross table we can create a 3 way cross table in R with the help of table function.
+
+```{r}
+table(mtcars$gear,mtcars$carb,mtcars$cyl)
+```
+
+
+## Data visialization in r
+
+
+```{r}
+# This R environment comes with all of CRAN preinstalled, as well as many other helpful packages
+# The environment is defined by the kaggle/rstats docker image: https://github.com/kaggle/docker-rstats
+# For example, here's several helpful packages to load in 
+
+library(ggplot2) # Data visualization
+library(readr) # CSV file I/O, e.g. the read_csv function
+library(gridExtra)
+library(grid)
+library(plyr)
+
+iris=iris
+
+# First let's get a random sampling of the data
+iris[sample(nrow(iris),10),]
+```
+
+
+## Density plots
+
+```{r}
+# Density & Frequency analysis with the Histogram,
+
+# Sepal length 
+HisSl <- ggplot(data=iris, aes(x=Sepal.Length))+
+  geom_histogram(binwidth=0.2, color="black", aes(fill=Species)) + 
+  xlab("Sepal Length (cm)") +  
+  ylab("Frequency") + 
+  theme(legend.position="none")+
+  ggtitle("Histogram of Sepal Length")+
+  geom_vline(data=iris, aes(xintercept = mean(Sepal.Length)),linetype="dashed",color="grey")
+#HisSl
+```
+
+```{r}
+# Sepal width
+HistSw <- ggplot(data=iris, aes(x=Sepal.Width)) +
+  geom_histogram(binwidth=0.2, color="black", aes(fill=Species)) + 
+  xlab("Sepal Width (cm)") +  
+  ylab("Frequency") + 
+  theme(legend.position="none")+
+  ggtitle("Histogram of Sepal Width")+
+  geom_vline(data=iris, aes(xintercept = mean(Sepal.Width)),linetype="dashed",color="grey")
+# Petal length
+HistPl <- ggplot(data=iris, aes(x=Petal.Length))+
+  geom_histogram(binwidth=0.2, color="black", aes(fill=Species)) + 
+  xlab("Petal Length (cm)") +  
+  ylab("Frequency") + 
+  theme(legend.position="none")+
+  ggtitle("Histogram of Petal Length")+
+  geom_vline(data=iris, aes(xintercept = mean(Petal.Length)),
+             linetype="dashed",color="grey")
+
+
+
+# Petal width
+HistPw <- ggplot(data=iris, aes(x=Petal.Width))+
+  geom_histogram(binwidth=0.2, color="black", aes(fill=Species)) + 
+  xlab("Petal Width (cm)") +  
+  ylab("Frequency") + 
+  theme(legend.position="right" )+
+  ggtitle("Histogram of Petal Width")+
+  geom_vline(data=iris, aes(xintercept = mean(Petal.Width)),linetype="dashed",color="grey")
+
+```
+
+## Creating the plots
+
+```{r}
+# Plot all visualizations
+grid.arrange(HisSl + ggtitle(""),
+             HistSw + ggtitle(""),
+             HistPl + ggtitle(""),
+             HistPw  + ggtitle(""),
+             nrow = 2,
+             top = textGrob("Iris Frequency Histogram", 
+                            gp=gpar(fontsize=15))
+)
+```
+
+
+## Creating Distribution plots in R
+
+
+```{r}
+# Notice the shape of the data, most attributes exhibit a normal distribution. 
+# You can see the measurements of very small flowers in the Petal width and length column.
+
+
+# We can review the density distribution of each attribute broken down by class value. 
+# Like the scatterplot matrix, the density plot by class can help see the separation of classes. 
+# It can also help to understand the overlap in class values for an attribute.
+
+DhistPl <-    ggplot(iris, aes(x=Petal.Length, colour=Species, fill=Species)) +
+  geom_density(alpha=.3) +
+  geom_vline(aes(xintercept=mean(Petal.Length),  colour=Species),linetype="dashed",color="grey", size=1)+
+  xlab("Petal Length (cm)") +  
+  ylab("Density")+
+  theme(legend.position="none")
+
+DhistPw <- ggplot(iris, aes(x=Petal.Width, colour=Species, fill=Species)) +
+  geom_density(alpha=.3) +
+  geom_vline(aes(xintercept=mean(Petal.Width),  colour=Species),linetype="dashed",color="grey", size=1)+
+  xlab("Petal Width (cm)") +  
+  ylab("Density")
+  
+
+
+DhistSw <- ggplot(iris, aes(x=Sepal.Width, colour=Species, fill=Species)) +
+  geom_density(alpha=.3) +
+  geom_vline(aes(xintercept=mean(Sepal.Width),  colour=Species), linetype="dashed",color="grey", size=1)+
+  xlab("Sepal Width (cm)") +  
+  ylab("Density")+
+  theme(legend.position="none")
+
+
+DhistSl <- ggplot(iris, aes(x=Sepal.Length, colour=Species, fill=Species)) +
+  geom_density(alpha=.3) +
+  geom_vline(aes(xintercept=mean(Sepal.Length),  colour=Species),linetype="dashed", color="grey", size=1)+
+  xlab("Sepal Length (cm)") +  
+  ylab("Density")+
+  theme(legend.position="none")
+
+
+# Plot all density visualizations
+grid.arrange(DhistSl + ggtitle(""),
+             DhistSw  + ggtitle(""),
+             DhistPl + ggtitle(""),
+             DhistPw  + ggtitle(""),
+             nrow = 2,
+             top = textGrob("Iris Density Plot", 
+                            gp=gpar(fontsize=15))
+)
+```
+
+## Box plot to visualize variation 
+
+
+```{r}
+# Next with the bloxplot we will identify some outliers. As you can see some classes do not overlap at all (e.g. Petal Length) 
+# where as with other attributes there are hard to tease apart (Sepal Width).
+
+ggplot(iris, aes(Species, Petal.Length, fill=Species)) + 
+  geom_boxplot()+
+  scale_y_continuous("Petal Length (cm)", breaks= seq(0,30, by=.5))+
+  labs(title = "Iris Petal Length Box Plot", x = "Species")
+```
+
+## Grid-plot of Box plots 
+
+```{r}
+# Let's plot all the variables in a single visualization that will contain all the boxplots
+
+
+BpSl <- ggplot(iris, aes(Species, Sepal.Length, fill=Species)) + 
+        geom_boxplot()+
+        scale_y_continuous("Sepal Length (cm)", breaks= seq(0,30, by=.5))+
+        theme(legend.position="none")
+
+
+
+BpSw <-  ggplot(iris, aes(Species, Sepal.Width, fill=Species)) + 
+          geom_boxplot()+
+          scale_y_continuous("Sepal Width (cm)", breaks= seq(0,30, by=.5))+
+          theme(legend.position="none")
+
+
+
+BpPl <- ggplot(iris, aes(Species, Petal.Length, fill=Species)) + 
+        geom_boxplot()+
+        scale_y_continuous("Petal Length (cm)", breaks= seq(0,30, by=.5))+
+        theme(legend.position="none")
+        
+
+
+BpPw <-  ggplot(iris, aes(Species, Petal.Width, fill=Species)) + 
+        geom_boxplot()+
+        scale_y_continuous("Petal Width (cm)", breaks= seq(0,30, by=.5))+
+        labs(title = "Iris Box Plot", x = "Species")
+
+
+
+# Plot all visualizations
+grid.arrange(BpSl  + ggtitle(""),
+             BpSw  + ggtitle(""),
+             BpPl + ggtitle(""),
+             BpPw + ggtitle(""),
+             nrow = 2,
+             top = textGrob("Sepal and Petal Box Plot", 
+                            gp=gpar(fontsize=15))
+)
+```
+
+
+## Violin plot- Another visualization method
+
+Violin plots are an alternative to box plots that solves the issues regarding displaying the underlying distribution of the observations, as these plots show a kernel density estimate of the data. In this tutorial, we will show you how to create a violin plot in base R from a vector and from data frames, how to add mean points and split the R violin plots by group. Tthey  show the number of points at a particular value by the width of the shapes. They can also include the marker for the median and a box for the interquartile range.
+    
+```{r}
+VpSl <-  ggplot(iris, aes(Species, Sepal.Length, fill=Species)) + 
+        geom_violin(aes(color = Species), trim = T)+
+        scale_y_continuous("Sepal Length", breaks= seq(0,30, by=.5))+
+        geom_boxplot(width=0.1)+
+        theme(legend.position="none")
+
+VpSw <-  ggplot(iris, aes(Species, Sepal.Width, fill=Species)) + 
+        geom_violin(aes(color = Species), trim = T)+
+        scale_y_continuous("Sepal Width", breaks= seq(0,30, by=.5))+
+        geom_boxplot(width=0.1)+
+        theme(legend.position="none")
+  
+
+
+VpPl <-  ggplot(iris, aes(Species, Petal.Length, fill=Species)) + 
+        geom_violin(aes(color = Species), trim = T)+
+        scale_y_continuous("Petal Length", breaks= seq(0,30, by=.5))+
+        geom_boxplot(width=0.1)+
+        theme(legend.position="none")
+        
+
+
+
+VpPw <-  ggplot(iris, aes(Species, Petal.Width, fill=Species)) + 
+        geom_violin(aes(color = Species), trim = T)+
+        scale_y_continuous("Petal Width", breaks= seq(0,30, by=.5))+
+        geom_boxplot(width=0.1)+
+        labs(title = "Iris Box Plot", x = "Species")
+  
+
+# Plot all visualizations
+grid.arrange(VpSl  + ggtitle(""),
+             VpSw  + ggtitle(""),
+             VpPl + ggtitle(""),
+             VpPw + ggtitle(""),
+             nrow = 2,
+             top = textGrob("Sepal and Petal Violin Plot", 
+                            gp=gpar(fontsize=15))
+)
+```
+
+
+## Scatter plots
+
+Now let's create a scatterplot of petal lengths versus petal widths with the color & shape by species. There is also a regression line with a 95% confidence band. Notice the petal length of the setosa is clearly a differenciated cluster so it will be a good predictor for ML.
+
+```{r}
+
+ggplot(data = iris, aes(x = Petal.Length, y = Petal.Width))+
+  xlab("Petal Length")+
+  ylab("Petal Width") +
+  geom_point(aes(color = Species,shape=Species))+
+  geom_smooth(method='lm')+
+  ggtitle("Petal Length vs Width")
+```
+
+ Here is a similar plot with more details on the regression line.
+ 
+```{r}
+library(car)
+scatterplot(iris$Petal.Length,iris$Petal.Width)
+```
+ 
+
+```{r}
+# Now check the Sepal Length vs Width. Notice the sepal of the Virginica and Versicolor species is more mixed, this feature might not be a good predictor.
+ggplot(data=iris, aes(x = Sepal.Length, y = Sepal.Width)) +
+  geom_point(aes(color=Species, shape=Species)) +
+  xlab("Sepal Length") + 
+  ylab("Sepal Width") +
+  ggtitle("Sepal Length vs Width")
+```
+
+## Correlation Plots
+
+Based on all the plots we have done we can see there is certain correlation. Let's take a look at the pairwise correlation numerical values to 
+ascertain the relationships in more detail.
+
+```{r}
+library(GGally)
+ggpairs(data = iris[1:4],
+        title = "Iris Correlation Plot",
+        upper = list(continuous = wrap("cor", size = 5)), 
+        lower = list(continuous = "smooth")
+)
+```
+
+## Paretto Charts
+
+A Pareto chart is a bar graph. The lengths of the bars represent frequency or cost (time or money), and are arranged with longest bars on the left and the shortest to the right. In this way the chart visually depicts which situations are more significant. This cause analysis tool is considered one of the seven basic quality tools.
+
+### WHEN TO USE A PARETO CHART
+
+1. When analyzing data about the frequency of problems or causes in a process
+
+2. When there are many problems or causes and you want to focus on the most significant
+
+3. When analyzing broad causes by looking at their specific components
+
+4. When communicating with others about your data
+
+```{r}
+library(ggplot2)
+library(ggQC)
+Data4Pareto <- data.frame(
+  KPI = c("Customer Service Time", "Order Fulfillment", "Order Processing Time",
+          "Order Production Time", "Order Quality Control Time", "Rework Time",
+          "Shipping"),
+  Time = c(1.50, 38.50, 3.75, 23.08, 1.92, 3.58, 73.17)) 
+
+
+ggplot2::ggplot(Data4Pareto, aes(x = KPI, y = Time)) +
+ ggQC::stat_pareto(point.color = "red",
+                   point.size = 3,
+                   line.color = "black",
+                   bars.fill = c("blue", "orange")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0.5))
+```
+
