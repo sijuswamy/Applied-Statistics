@@ -1,0 +1,244 @@
+---
+title: "Experiment-2"
+author: "siju.swamy@saintgits.org"
+date: "07/07/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+>Probability Distributions Set operations, simulation of various properties. Bayes’ rule. Generate and Visualize Discrete and continuous distributions using the statistical environment. Demonstration of CDF and PDF uniform and normal, binomial Poisson distributions. Students are expected to generate artificial data using the chosen statistical environment and explore various distribution and its properties. Various parameter changes may be studied.
+
+## Set operations in R
+
+Performs set `union`, `intersection`, (asymmetric!) `difference`, `equality` and `membership` on two vectors.
+
+>Syntax: `union(x, y)`,`intersect(x, y)`, `setdiff(x, y)`, `setdiff(y, x)`, `setequal(x, y)`.
+
+**Example:**
+
+```{r}
+x <- c(sort(sample(1:20, 9)), NA)
+y <- c(sort(sample(3:23, 7)), NA)
+union(x, y)
+```
+```{r}
+intersect(x, y)
+
+```
+```{r}
+setdiff(x, y)
+```
+```{r}
+setdiff(y, x)
+
+```
+```{r}
+setequal(x, y)
+```
+```{r}
+## True for all possible x & y :
+setequal( union(x, y),c(setdiff(x, y), intersect(x, y), setdiff(y, x)))
+
+```
+```{r}
+is.element(x, y) # length 10
+```
+
+```{r}
+is.element(y, x) # length  8
+```
+
+## Bayes’ rule
+
+
+```{r}
+library(LaplacesDemon)
+PrA <- c(0.75,0.25)
+PrBA <- c(6/9, 5/7)
+BayesTheorem(PrA, PrBA)
+```
+
+## Generate and Visualize Discrete and continuous distributions
+
+Two common probabilities you will calculate in statistics is $P(X=x)$ and $P(X\leq x)$. `R` provides your some simple ways to calculate these probabilities. In this section, we will learn how to calculate probabilities for Discrete Distributions in `R`.
+
+
+## Binomial Distribution
+
+The pdf of the Binomial distribution is given by $$p(x)= \binom n x  p^x(1-q)^{n-x}$$.
+
+
+The probability mass at $X=x$ can be calculated as `dbinom(x, size = 100, p = p)`. As an example $p(x=7)$ for a binomial distribution with $n=100,p=0.5$ is shown bellow.
+
+```{r}
+dbinom(7, size = 100, prob = 0.5)
+```
+
+The cumulative probability density, CDF, $p(X\leq x)$ can be calculated using the syntax 
+
+`pbinom(x, size = 100, p = p)`
+
+
+```{r}
+pbinom(7, size = 10, prob = 0.5)
+```
+
+## The Quantile or the Inverse CDF
+Next, we can take a look at getting the quantile from a distribution. This is also known as the inverse CDF. To do this, we can use the distribution functions prefixed with a `q`. In our case, we will use `qbinom`.
+
+**Example:***
+
+```{r}
+qbinom(0.9453125, size = 10, prob = 0.5)
+```
+
+## Generating Random Binomials
+
+We can also generate random samples from any of the distributions. Again, we follow the same pattern of having a short name for the distribution, i.e. binom, preceded by a prefix, `r`. To generate random samples, we can use `rbinom`.
+
+```{r}
+rbinom(10, size =  10, prob = .5)
+```
+
+The example above will generate a random sample, which is multiple values of X from a Bin(10, .5) distribution. In our case, we supplied 10 as the first argument, thus our sample size will be 10.
+
+## Plotting Binomial variates
+
+
+```{r}
+success=1:20
+plot(success,dbinom(success,size=20,prob=.3),
+     type='h',
+     main='Binomial Distribution (n=20, p=0.3)',
+     ylab='Probability',
+     xlab ='# Successes',
+     lwd=3)
+```
+
+
+## Poisson Distribution
+
+The pdf of the Poisson distribution is given by $$p(x)= \dfrac{e^{-\lambda}\lambda^x}{x!}$$.
+
+
+The probability mass at $X=x$ can be calculated as `dpois(x, lambda=lambda)`. As an example $p(x=7)$ for a binomial distribution with $\lambda =2$ is shown bellow.
+
+```{r}
+dpois(7, lambda= 2)
+```
+
+The cumulative probability density, CDF, $p(X\leq x)$ can be calculated using the syntax 
+
+`ppois(x, lambda=lambda)`
+
+
+```{r}
+ppois(7, lambda=2)
+```
+
+## The Quantile or the Inverse CDF
+Next, we can take a look at getting the quantile from a distribution. This is also known as the inverse CDF. To do this, we can use the distribution functions prefixed with a `q`. In our case, we will use `qbinom`.
+
+**Example:***
+
+```{r}
+qpois(0.9989033, lambda=2)
+```
+
+## Generating Random poisson variates
+
+We can also generate random samples from any of the distributions. Again, we follow the same pattern of having a short name for the distribution, i.e. binom, preceded by a prefix, `r`. To generate random samples, we can use `rpois`.
+
+```{r}
+rpois(10, lambda= 2)
+```
+
+The example above will generate a random sample, which is multiple values of $X$ from a `Pois(2)` distribution. In our case, we supplied 10 as the first argument, thus our sample size will be 10.
+
+## Plotting Poisson distribution
+
+```{r}
+plot(success, dpois(success, lambda=1.7),
+     type='h',
+     main='Poisson Distribution (n=20, lambda=1,7)',
+     ylab='Probability',
+     xlab ='# Successes',
+     lwd=3)
+success=1:20
+
+```
+
+## Continuous Distributions
+
+To calculate probabilities for continuous distributions, you need to use the cumulative distribution function, CDF. Unlike discrete distributions, there is no single point probability, $P(X=x)$, there is a density. In this article, we will learn how to calculate probabilities of continuous distributions in `R`.
+
+### Normal Distribution
+
+To calculate these probabilities, we can use function prefixed with `p` for each distribution. For example, to calculate the cdf of the normal distribution, we can use `pnorm`. So $p(X\leq 0.8)$ can be calculated as
+```{r}
+pnorm(q = .8, mean = 0, sd = 1)
+```
+
+## The Quantile or the Inverse CDF
+
+Next, we can take a look at getting the quantile from a distribution. This is also known as the inverse CDF. To do this, we can use the distribution functions prefixed with a `q`. In our case, we will use `qnorm`.
+
+```{r}
+qnorm(0.7881446, mean = 0, sd = 1)
+```
+Notice that our result is .8 which is exactly the value of `q` from the previous section. This shows how the two functions are inversely related.
+
+## Generating Random Samples
+
+It is common to generate a random sample of normal variables. These are used in simulations and many other situations you will learn. To do this, we can follow a similar pattern of the above function using the `norm` preceded by a `r` for random.
+
+```{r}
+rnorm(10)
+```
+
+## The PDF
+
+The pdf isn’t very useful for continuous variables as you are usually looking for the probability which is the cumulative density. However, you can use the `dnorm` and other functions to generate the density plots.
+
+```{r}
+x <- seq(-4, 4, length=100)
+y <- dnorm(x)
+plot(y, type='l')
+```
+
+## Unfirom Distribution
+
+In the similar way we can define the pmf at $x$ as `dunif(x,min=a,max=b)`. An example is shown bellow ($p(x=2)$)
+```{r}
+dunif(x=2,min=2,max=5)
+```
+
+The CDF can be calculated using the function `punfi(x,min=a,max=b)`.
+
+```{r}
+punif(q=2.6,min=2,max=5)
+```
+
+The quantile for $q=2.6$ can be found using
+
+```{r}
+qunif(p=0.2,min=2,max=5)
+```
+
+```{r}
+x <- seq(-7, 7, length=100)
+y <- dunif(x,-3,3)
+plot(x,y, type='l')
+```
+
+### Creating Uniform random variate
+
+```{r}
+runif(10,-2,2)
+```
+
