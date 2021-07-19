@@ -1,0 +1,67 @@
+---
+title: "Experiment-5"
+author: "siju.swamy@saintgits.org"
+date: "14/07/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+> Study of confidence intervals How to compute confidence intervals for the mean when the standard deviation is known.
+
+## Study of Confidence Intervals for means of Large and Small Samples
+
+### Calculate Confidence Interval in R – Normal Distribution
+
+confidence interval in r confidence interval r confidence intervals confidence interval in r linear regression confint r histogram with confidence interval in r confidence intervals in r plot confidence interval in r 
+ confidence interval function percentile confidence interval in r confidence interval for variance in r how to calculate 95 percent confidence interval in r confidence confidence interval function in r
+ 
+Given the parameters of the population proportion distribution and sample standard deviation, generate the bootstrap confidence interval. In this situation, we’re basically using r like an error interval calculator… Using the 95 percent confidence level and confidence coefficient function, we will now create the R code for a confidence interval. What does a 95 percent confidence interval mean? Essentially, a calculating a 95 percent confidence interval in R means that we are 95 percent sure that the true probability falls within the confidence interval range that we create in a standard normal distribution.
+
+$$CI=\bar{X}\pm t_{0.975}SE$$
+
+```{r}
+# Calculate Confidence Interval in R for Normal Distribution
+# Confidence Interval Statistics
+# Assume mean of 12
+# Standard deviation of 3
+# Sample size of 30
+# 95 percent confidence interval so right tail at 0.975
+
+xbar <- 12
+stddev <- 3
+n <- 30
+error <- qnorm(0.975)*stddev/sqrt(n)
+lower_bound <- xbar - error
+upper_bound <- xbar + error
+lower_bound
+upper_bound
+```
+
+### Calculate Confidence Interval in R – t Distribution
+
+For experiments run with small sample sizes it is generally inappropriate to use the standard normal distribution or normal approximation. For more accurate small sample hypothesis testing a student T distribution is the correct choice for this environment. A t confidence interval is slightly different from a normal or percentile approximate confidence interval in R. When creating a approximate confidence interval using a t table or student t distribution, you help to eliminate some of the variability in your data by using a slightly different base dataset binomial distribution.
+
+R can support this by substituting the qt function for the qnorm function, as demonstrated below…. assume we are working with a semi large sample size of 15. You will need to tell the qt function the degrees of freedom as a parameter (should be n-1).
+
+```{r}
+# Calculate Confidence Interval in R for t Distribution
+# t test confidence interval
+# Assume mean of 12
+# Standard deviation of 3
+# Sample size of 15
+# 95% confidence interval so the right tail at .975
+
+xbar <- 12
+stddev <- 3
+n <- 30
+error <- qt(0.975,df=n-1)*stddev/sqrt(n)
+lower_bound <- xbar - error
+upper_bound <- xbar + error
+lower_bound
+upper_bound
+```
+
