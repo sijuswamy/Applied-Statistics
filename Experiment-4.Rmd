@@ -1,0 +1,78 @@
+---
+title: "Experiment-4"
+author: "siju.swamy@saintgits.org"
+date: "14/07/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+>Study of binomial distribution Plots of density and distribution functions. Normal approximation to the Binomial distribution. Central limit theorem.
+
+
+## Normal Approximation of Binomial Distribution Using Central Limit Theorem
+
+
+Let $\textstyle \{X_{1},\ldots ,X_{n}\}$ be a random sample of size ${\textstyle n}$ — that is, a sequence of independent and identically distributed (i.i.d.) random variables drawn from a distribution of expected value given by $\textstyle \mu$ and finite variance given by $\textstyle \sigma ^{2}$. Suppose we are interested in the sample average
+
+${\displaystyle {\bar {X}}_{n}\equiv {\frac {X_{1}+\cdots +X_{n}}{n}}}$
+of these random variables. By the law of large numbers, the sample averages converge almost surely (and therefore also converge in probability) to the expected value ${\textstyle \mu }$ as $\textstyle n\to \infty$. The classical central limit theorem describes the size and the distributional form of the stochastic fluctuations around the deterministic number ${\textstyle \mu }$ during this convergence. More precisely, it states that as ${\textstyle n}$ gets larger, the distribution of the difference between the sample average ${\textstyle {\bar {X}}_{n}}$ and its limit ${\textstyle \mu }$, when multiplied by the factor ${\textstyle {\sqrt {n}}}$ (that is ${\textstyle {\sqrt {n}}({\bar {X}}_{n}-\mu )}$) approximates the normal distribution with mean 0 and variance ${\textstyle \sigma ^{2}}$.
+
+
+
+The Central Limit Theorem illustrates that a sample will follow normal distribution if the sample size is large enough. We will use that as well as the rules around determining probabilities in a normal distribution, to arrive at the probability in a Binomial or Poisson case with large $n$.
+
+
+**Problem 1:** I have a group of 100 friends who are smokers.  The probability of a random smoker having lung disease is 0.3. What are chances that a maximum of 35 people wind up with lung disease?
+
+**Solution:** Here we have to find $P(x\leq 35)$. Using a Binomial distribution we can calculate it as:
+
+```{r}
+pbinom(35,size=100,prob=0.3)
+```
+
+To use a normal distribution, first we have to find $\mu=np=100\times 0.3=30$, $\sigma=\sqrt{npq}=\sqrt{100\times 0.3\times 0.7}=4.582576$.
+
+```{r}
+pnorm(35,30,4.582576)
+```
+
+**Problem 2:** Suppose 35% of all households in Carville have three cars, what is the probability that a random sample of 80 households in Carville will contain at least 30 households
+that have three cars.
+
+**Solution:** Here we have to find $p(x\geq 30)$.
+
+Using Binomial distribution,
+```{r}
+1-pbinom(30,80,0.35)
+```
+
+For using Normal distribution $\mu=28,\sigma=4.266146$.
+
+```{r}
+pnorm(30,28,4.27,lower.tail = F)
+```
+
+
+**Problem 3:** About two out of every three gas purchases at Cheap Gas station are paid for by credit
+cards. 480 customers buying gas at this station are randomly selected. Find the following
+probabilities using the binomial distribution, normal approximation and using the continuity correction.
+
+1. Find n, p, q, the mean and the standard deviation.
+
+2. Find the probability that greater than 300 will pay for their purchases using credit card.
+
+3. Find the probability that between 220 to 320 will pay for their purchases using
+credit card.
+
+4. Generate a random number using the command floor(rnorm(1, mean=200, sd=50)).
+
+Write this number down. Lets call it N. (This number will be different for each student.)
+
+5. Find the probability that at most N customers will pay for their purchases using
+credit card.
+
+
