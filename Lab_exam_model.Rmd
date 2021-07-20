@@ -1,0 +1,56 @@
+---
+title: "Lab Examination Model Question NoteBook"
+author: "siju.swamy@saintgits.org"
+date: "7/20/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Part A- Answer all Questions. Each question carries 2 marks.
+
+1. Find mean and median of the set of numbers : 12, 23, 13, 14, 56, 24, 35, 12, 36, 67, 78, 89, 34, 10, 21, 42, 67, 56.
+
+2. Plot the function $y=4x^2-3x+2$ for continuous values of $x$ in the range $-5$ to 5.
+
+3. If $X$ follows a binomial distribution with mean $\lambda=1.7$. Find the probability that the random variate $X>5$.
+
+4. Create 10 random samples from a normal population with mean $\mu=5$ and variance $\sigma^2=4$.
+
+5. Find the normal approximation of the binomial distribution with success probability $p=0.005$ and sample size 500 for $x=2$.
+
+## Part B- Answer any two questions from this section. Each question carries 5 marks.
+
+6. Plot the probability mass function for a Poisson distribution with mean $\lambda=2, 2.5, 3.5$ for sample size 100.
+
+
+7. Find a 95% confidance interval for mean of a normal distribution with mean $\mu=50$ and standard deviation $\sigma=10$.
+
+8. The GATE score of 2021 examination is normally distributed with mean $\mu=45.2$ and standard deviation $6.7$. If IIT-Bombay has decided to give JRF to only the top 5% of the qualified candidates, find out the cut-off mark for the JRF.
+
+9. Create a Pareto Chart for the following data and interpret it for Statistical Quality Control.
+$\begin{array}{lccccccc}
+Event:&Customer Service Time&Order Fulfillment&Order Processing Time&Order Production Time&Order Quality Control Time&Rework Time&Shipping\\
+Duration:&1.50& 38.50&3.75&23.08&1.92&3.58&73.17
+\end{array}$
+
+
+```{r}
+library(ggplot2)
+library(ggQC)
+Data4Pareto <- data.frame(
+  KPI = c("Customer Service Time", "Order Fulfillment", "Order Processing Time",
+          "Order Production Time", "Order Quality Control Time", "Rework Time",
+          "Shipping"),
+  Time = c(1.50, 38.50, 3.75, 23.08, 1.92, 3.58, 73.17)) 
+ggplot2::ggplot(Data4Pareto, aes(x = KPI, y = Time)) +
+ ggQC::stat_pareto(point.color = "red",
+                   point.size = 3,
+                   line.color = "black",
+                   bars.fill = c("blue", "orange")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0.5))
+```
